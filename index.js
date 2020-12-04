@@ -1,13 +1,12 @@
 const info = require('./constants/contacts')
+const chalk = require('chalk');
 
 const XLSX = require('xlsx');
-const workbook = XLSX.readFile('test.xlsx');
+const workbook = XLSX.readFile('test2.xlsx');
 const ws = workbook.Sheets[workbook.SheetNames[0]]
 
 const getLastRow = (startingRow) => {
-
   let cell = ws[`A${startingRow}`]
-
   while (cell) {
     startingRow++
     cell = ws[`A${startingRow}`]
@@ -17,45 +16,45 @@ const getLastRow = (startingRow) => {
 
 const formatData = (data) => {
   data.sort((a, b) => a[3] - b[3])
-  console.log('sorted', data)
-
+  // we know the MINUM amount of transaction is the the number of people that are positve ;
   let left = 0
   let right = data.length - 1
   let result = []
+  //use two pointer approach, since i sorted the array, left pointer will always be loser, right will be winner
   while (left <= right) {
     let loserAbsAmount = Math.abs(data[left][3])
     let winnerAbsAmount = Math.abs(data[right][3])
     let loserName = data[left][0]
 
     let winnerName = data[right][0]
-    console.log(loserName, 'loserAbsAmount: ', loserAbsAmount, winnerName, 'winnerAbsAmount: ', winnerAbsAmount)
     let winnerEmail = info[winnerName]
 
-    //loser lost more than winner, loser pays winner's stack and keep going 
+    //loser lost more than winner, loser pays winner's stack. So the left pointer stays on left , while right pointer should now be 0
     if (loserAbsAmount > winnerAbsAmount) {
 
       data[left][3] += data[right][3]
       data[right][3] = 0;
-      let statement = `${loserName} pays ${winnerName} ${winnerAbsAmount}, his email is ${winnerEmail}!`
+      let statement = `${loserName} pays ${winnerName} ${winnerAbsAmount.toFixed(2)}`
       result.push(statement)
       right--
 
     } else if (loserAbsAmount < winnerAbsAmount) {
+
       data[right][3] += data[left][3]
       data[left][3] = 0;
-      let statement = `${loserName} pays ${winnerName} ${loserAbsAmount}, his email is ${winnerEmail}!`
+      let statement = `${loserName} pays ${winnerName} ${loserAbsAmount.toFixed(2)}`
       result.push(statement)
       left++
     } else {
-      let statement = `${loserName} pays ${winnerName} ${loserAbsAmount}, his email is ${winnerEmail}!`
+      let statement = `${loserName} pays ${winnerName} ${loserAbsAmount.toFixed(2)}`
       result.push(statement)
       left++
       right--
     }
-
-
   }
-  console.log(result)
+  for(let item of result){
+    console.log(item)
+  }
   return result
 }
 
