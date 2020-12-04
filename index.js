@@ -2,7 +2,7 @@ const info = require('./constants/contacts')
 const chalk = require('chalk');
 
 const XLSX = require('xlsx');
-const workbook = XLSX.readFile('test2.xlsx');
+const workbook = XLSX.readFile('test3.xlsx');
 const ws = workbook.Sheets[workbook.SheetNames[0]]
 
 const getLastRow = (startingRow) => {
